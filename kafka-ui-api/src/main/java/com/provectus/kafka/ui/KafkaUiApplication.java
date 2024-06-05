@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.util.DynamicConfigOperations;
+import org.fusesource.jansi.AnsiConsole;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -14,7 +15,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class KafkaUiApplication {
 
   public static void main(String[] args) {
-    startApplication(args);
+    try {
+      AnsiConsole.systemInstall();
+      startApplication(args);
+    } finally {
+      AnsiConsole.systemInstall();
+    }
   }
 
   public static ConfigurableApplicationContext startApplication(String[] args) {
