@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import com.provectus.kafka.ui.model.KafkaCluster;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,6 +20,7 @@ public class ClustersStatisticsScheduler {
   @Scheduled(fixedRateString = "${kafka.update-metrics-rate-millis:30000}")
   public void updateStatistics() {
     Flux.fromIterable(clustersStorage.getKafkaClusters())
+        .filter(KafkaCluster::isEnabled)
         .parallel()
         .runOn(Schedulers.parallel())
         .flatMap(cluster -> {

@@ -19,7 +19,9 @@ public class StatisticsCache {
 
   public StatisticsCache(ClustersStorage clustersStorage) {
     var initializing = Statistics.empty().toBuilder().status(ServerStatusDTO.INITIALIZING).build();
-    clustersStorage.getKafkaClusters().forEach(c -> cache.put(c.getName(), initializing));
+    var offline = Statistics.empty().toBuilder().status(ServerStatusDTO.OFFLINE).build();
+    clustersStorage.getKafkaClusters().forEach(c ->
+        cache.put(c.getName(), c.isEnabled() ? initializing : offline));
   }
 
   public synchronized void replace(KafkaCluster c, Statistics stats) {

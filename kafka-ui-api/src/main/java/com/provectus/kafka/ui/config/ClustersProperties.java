@@ -52,6 +52,7 @@ public class ClustersProperties {
     Long pollingThrottleRate;
     TruststoreConfig ssl;
     AuditProperties audit;
+    boolean enabled = false;
   }
 
   @Data

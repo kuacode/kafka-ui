@@ -35,7 +35,7 @@ public class GithubReleaseInfo {
         .uri(url)
         .exchangeToMono(resp -> resp.bodyToMono(GithubReleaseDto.class))
         .timeout(GITHUB_API_MAX_WAIT_TIME)
-        .doOnError(th -> log.trace("Error getting latest github release info", th))
+        .doOnError(th -> log.warn("Error getting latest github release info: {}", th.getMessage()))
         .onErrorResume(th -> true, th -> Mono.just(GithubReleaseDto.empty()))
         .doOnNext(release -> this.release = release)
         .then();

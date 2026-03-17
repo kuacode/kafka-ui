@@ -55,6 +55,52 @@ paths:
           description: Not found
 
 
+  /api/clusters/{clusterName}/connect:
+    post:
+      tags:
+        - Clusters
+      summary: connectCluster
+      operationId: connectCluster
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cluster'
+        404:
+          description: Not found
+
+
+  /api/clusters/{clusterName}/disconnect:
+    post:
+      tags:
+        - Clusters
+      summary: disconnectCluster
+      operationId: disconnectCluster
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cluster'
+        404:
+          description: Not found
+
+
   /api/clusters/{clusterName}/brokers:
     get:
       tags:
@@ -2191,6 +2237,8 @@ components:
           type: boolean
         version:
           type: string
+        enabled:
+          type: boolean
         features:
           type: array
           items:

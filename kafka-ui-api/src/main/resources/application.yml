@@ -19,3 +19,7 @@ logging:
     reactor.netty.http.server.AccessLog: INFO
     org.hibernate.validator: WARN
 
+# 动态配置
+dynamic:
+  config:
+    enabled: true

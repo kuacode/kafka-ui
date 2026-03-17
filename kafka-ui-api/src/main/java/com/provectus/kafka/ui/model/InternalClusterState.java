@@ -27,6 +27,7 @@ public class InternalClusterState {
   private BigDecimal bytesInPerSec;
   private BigDecimal bytesOutPerSec;
   private Boolean readOnly;
+  private Boolean enabled;
 
   public InternalClusterState(KafkaCluster cluster, Statistics statistics) {
     name = cluster.getName();
@@ -75,6 +76,7 @@ public class InternalClusterState {
     outOfSyncReplicasCount = partitionsStats.getOutOfSyncReplicasCount();
     underReplicatedPartitionCount = partitionsStats.getUnderReplicatedPartitionCount();
     readOnly = cluster.isReadOnly();
+    enabled = cluster.isEnabled();
   }
 
 }

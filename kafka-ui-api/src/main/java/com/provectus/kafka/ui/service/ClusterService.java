@@ -6,6 +6,8 @@ import com.provectus.kafka.ui.model.ClusterMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterStatsDTO;
 import com.provectus.kafka.ui.model.InternalClusterState;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.ServerStatusDTO;
+import com.provectus.kafka.ui.model.Statistics;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -47,5 +49,34 @@ public class ClusterService {
   public Mono<ClusterDTO> updateCluster(KafkaCluster cluster) {
     return statisticsService.updateCache(cluster)
         .map(metrics -> clusterMapper.toCluster(new InternalClusterState(cluster, metrics)));
+  }
+
+  public Mono<ClusterDTO> connectCluster(String clusterName) {
+    return Mono.fromCallable(() -> clustersStorage.getClusterByName(clusterName))
+        .flatMap(clusterOpt -> {
+          if (clusterOpt.isEmpty()) {
+            return Mono.empty();
+          }
+          KafkaCluster cluster = clusterOpt.get();
+          cluster.getOriginalProperties().setEnabled(true);
+          var offline = Statistics.empty().toBuilder().status(ServerStatusDTO.INITIALIZING).build();
+          statisticsCache.replace(cluster, offline);
+          return statisticsService.updateCache(cluster)
+              .map(metrics -> clusterMapper.toCluster(new InternalClusterState(cluster, metrics)));
+        });
+  }
+
+  public Mono<ClusterDTO> disconnectCluster(String clusterName) {
+    return Mono.fromCallable(() -> clustersStorage.getClusterByName(clusterName))
+        .flatMap(clusterOpt -> {
+          if (clusterOpt.isEmpty()) {
+            return Mono.empty();
+          }
+          KafkaCluster cluster = clusterOpt.get();
+          cluster.getOriginalProperties().setEnabled(false);
+          var offline = Statistics.empty().toBuilder().status(ServerStatusDTO.OFFLINE).build();
+          statisticsCache.replace(cluster, offline);
+          return Mono.just(clusterMapper.toCluster(new InternalClusterState(cluster, offline)));
+        });
   }
 }

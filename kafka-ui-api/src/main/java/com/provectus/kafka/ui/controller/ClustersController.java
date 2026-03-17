@@ -75,4 +75,36 @@ public class ClustersController extends AbstractController implements ClustersAp
         .then(clusterService.updateCluster(getCluster(clusterName)).map(ResponseEntity::ok))
         .doOnEach(sig -> audit(context, sig));
   }
+
+  @Override
+  public Mono<ResponseEntity<ClusterDTO>> connectCluster(String clusterName,
+                                                          ServerWebExchange exchange) {
+
+    AccessContext context = AccessContext.builder()
+        .cluster(clusterName)
+        .operationName("connectCluster")
+        .build();
+
+    return validateAccess(context)
+        .then(clusterService.connectCluster(clusterName)
+            .map(ResponseEntity::ok)
+            .onErrorReturn(ResponseEntity.notFound().build()))
+        .doOnEach(sig -> audit(context, sig));
+  }
+
+  @Override
+  public Mono<ResponseEntity<ClusterDTO>> disconnectCluster(String clusterName,
+                                                              ServerWebExchange exchange) {
+
+    AccessContext context = AccessContext.builder()
+        .cluster(clusterName)
+        .operationName("disconnectCluster")
+        .build();
+
+    return validateAccess(context)
+        .then(clusterService.disconnectCluster(clusterName)
+            .map(ResponseEntity::ok)
+            .onErrorReturn(ResponseEntity.notFound().build()))
+        .doOnEach(sig -> audit(context, sig));
+  }
 }
