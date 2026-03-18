@@ -54,7 +54,7 @@ const Messages: React.FC = () => {
     setSearchParams(searchParams);
   }, [serdes]);
 
-  const defaultSeekValue = SeekDirectionOptions[0];
+  const defaultSeekValue = SeekDirectionOptionsObj[SeekDirection.BACKWARD];
 
   const [seekDirection, setSeekDirection] = React.useState<SeekDirection>(
     (searchParams.get('seekDirection') as SeekDirection) ||

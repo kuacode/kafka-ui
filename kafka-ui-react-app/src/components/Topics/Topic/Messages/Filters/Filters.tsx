@@ -74,7 +74,7 @@ export interface ActiveMessageFilter {
   code: string;
 }
 
-const PER_PAGE = 100;
+const DEFAULT_LIMIT = 100;
 
 export const SeekTypeOptions = [
   { value: SeekType.OFFSET, label: 'Offset' },
@@ -138,6 +138,10 @@ const Filters: React.FC<FiltersProps> = ({
     searchParams.get('valueSerde') || ''
   );
 
+  const [limit, setLimit] = React.useState<number>(
+    Number(searchParams.get('limit')) || DEFAULT_LIMIT
+  );
+
   const [savedFilters, setSavedFilters] = React.useState<MessageFilters[]>(
     JSON.parse(localStorage.getItem('savedFilters') ?? '[]')
   );
@@ -190,7 +194,8 @@ const Filters: React.FC<FiltersProps> = ({
     setOffset('');
     setTimestamp(null);
     setQuery('');
-    changeSeekDirection(SeekDirection.FORWARD);
+    setLimit(DEFAULT_LIMIT);
+    changeSeekDirection(SeekDirection.BACKWARD);
     getSelectedPartitionsFromSeekToParam(searchParams, partitions);
     setSelectedPartitions(
       partitions.map((partition: Partition) => {
@@ -211,7 +216,7 @@ const Filters: React.FC<FiltersProps> = ({
           : query,
       filterQueryType: queryType,
       attempt: nextAttempt,
-      limit: PER_PAGE,
+      limit,
       page: page || 0,
       seekDirection,
       keySerde: keySerde || searchParams.get('keySerde') || '',
@@ -521,6 +526,22 @@ const Filters: React.FC<FiltersProps> = ({
               value={searchParams.get('valueSerde') as string}
               minWidth="170px"
               selectSize="M"
+              disabled={isTailing}
+            />
+          </div>
+          <div>
+            <InputLabel>Limit</InputLabel>
+            <S.OffsetSelector
+              id="limit"
+              type="number"
+              inputSize="M"
+              value={limit}
+              placeholder="Messages limit"
+              min={1}
+              max={10000}
+              onChange={({ target: { value } }) =>
+                setLimit(Number(value) || DEFAULT_LIMIT)
+              }
               disabled={isTailing}
             />
           </div>
