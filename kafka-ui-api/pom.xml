@@ -431,8 +431,9 @@
                     <!-- mandatory -->
                     <mainClass>com.provectus.kafka.ui.KafkaUiApplication</mainClass>
                     <!-- optional -->
-                    <bundleJre>false</bundleJre>
+                    <bundleJre>true</bundleJre>
                     <platform>auto</platform>
+                    <generateInstaller>false</generateInstaller>
                     <winConfig>
                         <headerType>console</headerType>
                     </winConfig>
